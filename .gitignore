@@ -20,4 +20,4 @@ myenv/
 .pytest_cache/
 
 # Ignore ML model files
-**/house_model.pkl
+model/house_model.pkl
