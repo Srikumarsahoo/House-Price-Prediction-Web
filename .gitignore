@@ -19,4 +19,5 @@ myenv/
 # python cache
 .pytest_cache/
 
+# Ignore ML model file
 model/house_model.pkl
