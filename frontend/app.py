@@ -3,8 +3,12 @@ import requests
 
 API_URL = "http://127.0.0.1:8000/predict"
 
-st.title("🏠 Housing Price Prediction Web")
-st.markdown("Enter your details below:")
+st.set_page_config(page_title="House Price Prediction", page_icon="🏠", layout="centered")
+
+st.title("🏠 Housing Price Prediction")
+st.markdown("### Enter your property details")
+
+st.divider()
 
 # Input fields
 Area_Sq = st.number_input("Area per Square meter", min_value=100)
@@ -23,8 +27,10 @@ location_score = st.number_input("Enter the location popularity", min_value=1, m
 
 Parking = st.number_input("Number of parkings required", min_value=0, max_value=10)
 
+st.divider()
+
 # Button
-if st.button("Predict My House Price"):
+if st.button("Predict My House Price", use_container_width=True):
 
     input_data = {
         "Area_Sq": Area_Sq,
@@ -39,19 +45,35 @@ if st.button("Predict My House Price"):
 
     try:
         response = requests.post(API_URL, json=input_data)
+
         try:
             result = response.json()
-            st.success(result)
         except:
             st.error("Invalid response from API")
+            st.stop()
 
         if response.status_code == 200 and "response" in result:
+
             prediction = result["response"]
-            st.success(f"predicted House Price: **{prediction['Predicted_price']}")
 
-            st.write("### Price Range:", prediction["Price_range"])
+            st.success("Prediction Successful")
 
-            st.write("### Category:",prediction["Category"])
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.metric(
+                    label="Predicted House Price",
+                    value=f"₹ {prediction['Predicted_price']}"
+                )
+
+            with col2:
+                st.metric(
+                    label="Category",
+                    value=prediction["Category"]
+                )
+
+            st.markdown("### Price Range")
+            st.info(prediction["Price_range"])
 
         else:
             st.error(f"API Error: {response.status_code}")
